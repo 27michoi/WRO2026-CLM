@@ -1,7 +1,14 @@
 # WRO-FE-XX
 Documentation for team Double-X's robot for WRO 2025 - Future Engineers.
 
+If you're searching for the National Final version of the code, you can find the file main.py (National Final version) in the same file as run.py (International Final version). Both codes work if you'd like to try Version 1.
+
 ---
+
+## Summary Video
+This 6 minutes video summarizes our project and documentation. We recommend you watch it to easily and efficiently understand our project !
+
+[![Summmary Video](https://github.com/user-attachments/assets/31b87dc7-00fe-4735-9fdf-9ea1fcb70fb9)](https://www.youtube.com/watch?v=--gac5zhfu8 "Summary Video")
 
 ## The Team
 Team Double-X is made of 2 engineering students, Michael Bruneau and Emile Jacques, and we've been teammates since 2015 !  
@@ -11,6 +18,10 @@ Team Double-X is made of 2 engineering students, Michael Bruneau and Emile Jacqu
   <tr>
     <td><img src="https://github.com/user-attachments/assets/5b6d32f1-d88b-4efd-afe2-26fe086037a9" alt="Michael Bruneau" width="400" height="300" /></td>
     <td><img src="https://github.com/user-attachments/assets/7559d462-5953-40f4-a1f0-3e67d9a98dc4" alt="Emile Jacques" width="400" height="300" /></td>
+  </tr>
+  <tr>
+    <td><img src="https://github.com/user-attachments/assets/123f3121-7b21-4dbf-b538-8cc8e75ebd34" alt="Michael Bruneau" width="400" height="300" /></td>
+    <td><img src="https://github.com/user-attachments/assets/9d4218fe-5a3f-4633-a5eb-1c1c1b0a9048" alt="Michael Bruneau" width="400" height="300" /></td>
   </tr>
 </table>
 
@@ -42,14 +53,24 @@ Have you ever had methods in your class needing the 'self' input to access the o
   </tr>
 </table>
 
+#### Recent Modifications
+A few hardware modifications were brought since these pictures were taken. 
+- **Stepper Motor & Driver Wiring:** The wiring was simplified to remove one terminal block and multiple solid wires.
+- **White Tape Replaced:** The white tape that used to be on top of the servo motor was replaced by a thin 3D-printed white plate.
+- **Canadian Flags:** A few Canadian flags were added to personalized our robot, since we are proud to represent Canada once again !
+
 ---
 
 ## Performance Videos
 ### Challenge 1
-[Open Challenge Video on Youtube: ](https://youtu.be/OgR29EYXkdw)
+[Open Challenge Video for International Final on Youtube: ](https://youtu.be/sGerwb-1xKw)
+
+[Open Challenge Video for National Final on Youtube: ](https://youtu.be/OgR29EYXkdw)
 
 ### Challenge 2
-[Obstacle Challenge Video on Youtube: ](https://youtu.be/s9inOFHvLYA)
+[Obstacle Challenge Video for International Final on Youtube: ](https://youtu.be/1s1PPFf92Jc)
+
+[Obstacle Challenge Video for National Final on Youtube: ](https://youtu.be/s9inOFHvLYA)
 
 ---
 
@@ -131,6 +152,15 @@ Mechanically assembling the robot is quite straight-forward. The tricky part com
 ---
 
 ## Power & Sense Management
+
+### Hardware Architecture
+The "brain" of our robot is a Raspberry Pi 5, coded in Python. Connected to it is the Pi Camera 3 wide angle, meaning that all data will be directly given to the Pi. The Pi is also connected to an Arduino Uno R3, coded in C++, which controls the servo motor and the stepper motor's driver. The Arduino receives its commands via serial communication from the Pi. The stepper motor's driver will then power the motor if needed. 
+
+<table>
+  <tr>
+    <td><img src="https://github.com/user-attachments/assets/867b1a85-5b9e-4816-b490-e14e0cbea6b1" alt="Michael Bruneau" width="700" height="700" /></td>
+  </tr>
+</table>
 
 - **Controller:** Raspberry Pi 5 (vision+logic, master) + Arduino Uno R3 (motor driver, slave).  
   [Why We Chose the Pi 5](elec/README_elec.md#21-main-components-choice)
@@ -231,6 +261,7 @@ The camera pipeline produces these images used by the algorithms:
       <img src="https://github.com/user-attachments/assets/f61b0e58-9b93-4888-8548-6ec4ca5e9cb8" width="700">
     </td>
   </tr>
+  <p>*The display image contains new information such as the state of the program, a timer and the speed.</p>
   <tr>
     <td align="center">
       <strong>Polygon Image</strong><br>
@@ -274,11 +305,11 @@ Notes:
 
 ### 3) Obstacle handling calculations
 
-When an obstacle is present (green/red/pink block), the robot computes an avoidance “object line,” converts it to an angle, and arbitrates with wall following.
+When an obstacle is present (green/red/pink block), the robot computes an avoidance “object line,” converts it to an angle, and arbitrates with wall following. The robot will accelerate between obstacles.
 
 Process in [`ImageAlgorithms.find_obstacle_angle_and_draw_lines`](code/XX_2025_package/classes/image_algoriths.py):
-- Safety first: [`ImageAlgorithms.check_outer_wall_crash`](code/XX_2025_package/classes/image_algoriths.py). If a frontal collision risk is detected, immediately force a sharp evasive turn.
-- Find the largest obstacle rectangle on the color mask and classify its color using HSV.
+- Safety first: [`ImageAlgorithms.check_outer_wall_crash`](code/XX_2025_package/classes/image_algoriths.py) and [`ImageAlgorithms.check_inner_wall_crash`](code/XX_2025_package/classes/image_algoriths.py). If a frontal collision risk is detected, immediately force a sharp evasive turn.
+- Find the largest / lowest obstacle rectangle on the color mask image and classify its color using HSV.
 - Draw a guidance line from the obstacle center to a safe floor target x:
   - Green → pass on the right; Red → pass on the left (policy).
 - Convert that line’s geometry into an object angle, then map it to a servo angle with a color-specific offset in [`ImageAlgorithms.calculate_servo_angle_from_obstacle`](code/XX_2025_package/classes/image_algoriths.py).
@@ -344,9 +375,16 @@ Priority in practice:
 
 ---
 
+## Software Key Components
+
+- **Communication:** Serial communication via USB cable between Arduino and Pi (using custom protocol).\
+  [Communications Protocol Details](code/md/communication.md)
+- **Raspberry Pi Environment Setup:** Downloading utilities on your Pi, creating a virtual environment (venv), and installing dependencies.\
+  [How to Setup your Raspberry Pi](code/md/raspberry_pi_setup.md)
+
+---
+
 ## Possible Improvements
-- **Replacing White Tape with 3D-Printed Part:**
-The white tape on top of the servo is necessary to ensure the bottom-middle part of the image is white.
 - **Holding the Raspberry Pi Better:**
 The Raspberry Pi is currently fixed with black electric tape. Ideally, a simple detachable 3D-printed part could hold it.
 - **Cutting Power Automatically at 10.8V:**
@@ -355,18 +393,7 @@ Whenever the battery pack voltage is below 10.8V, we would open the circuit to e
 Instead of using a breadboard with mediocre cable management, we would simply add a custom PCB where we would solder the necessary cables in place.
 - **Adding Lateral Distance Sensors:**
 The current one-camera solution is complex to work with for the parallel parking. We would add distance sensors on both sides to detect the parking parking when we pass by, and to improve the overall wall detections across both challenges.
-- **Creating a Communications Class:**
-Our main.py code is currently quite messy, mostly because all commands sent to the Arduino are done inside the main.py, which isn't ideal. We would create yet another class to lighten the code in the main.py.
-- **Optimizing the Overall Code:**
-Thanks to the comments, the code is quite clear, even for an inexperienced user. The problem is that there currently is too much code. We would need to simplify the algorithms and regroup some functions. We already did it once, but some more optimizing could be done before the next event.
-
----
-
-## Software Key Components
-
-- **Communication:** Serial communication via USB cable between Arduino and Pi (using custom protocol).\
-  [Communications Protocol Details](code/md/communication.md)
-- **Raspberry Pi Environment Setup:** Downloading utilities on your Pi, creating a virtual environment (venv), and installing dependencies.\
-  [How to Setup your Raspberry Pi](code/md/raspberry_pi_setup.md)
+- **Adding Dynamic Ranges for Colors:**
+The HSV ranges we have are set for the entire run. If we had more time, we would love to add dynamic ranges to account for walls / obstacles that appear lighter because of lighting on certain part of the wall, because of windows for example.
 
 ---
