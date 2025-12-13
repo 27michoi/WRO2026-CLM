@@ -79,7 +79,7 @@ class CameraManager:
         output_path = os.path.join(output_folder, f"video{VideoCounter.get_video_counter()}.mp4")
         
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-        self.video_output = cv2.VideoWriter(output_path, fourcc,24.0, (ImageTransformUtils.PIC_WIDTH, ImageTransformUtils.PIC_HEIGHT))
+        self.video_output = cv2.VideoWriter(output_path, fourcc,25.0, (ImageTransformUtils.PIC_WIDTH, ImageTransformUtils.PIC_HEIGHT))
         VideoCounter.increment_video_counter()
         
     def start_camera(self):

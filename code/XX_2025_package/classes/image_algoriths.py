@@ -20,7 +20,7 @@ ChallengeParameters = namedtuple('ChallengeParameters', ['kp', 'kd', 'base_thres
 # Challenge configs for wall follower
 CHALLENGE_CONFIG = {
     1: ChallengeParameters(kp = 0.18, kd = 0.25 , base_threshold = ImageTransformUtils.PIC_HEIGHT, offsets = [-100, -30, 40]),
-    2: ChallengeParameters(kp = 0.35, kd = 0.25 , base_threshold = ImageTransformUtils.PIC_HEIGHT, offsets = [-140, -100   ]),
+    2: ChallengeParameters(kp = 0.35, kd = 0.25 , base_threshold = ImageTransformUtils.PIC_HEIGHT, offsets = [-140, -100   ]), # kp was 0.35
     3: ChallengeParameters(kp = 1.5 , kd = 1.0  , base_threshold = ImageTransformUtils.PIC_HEIGHT, offsets = [-30          ]),
     4: ChallengeParameters(kp = 0.35, kd = 0.25 , base_threshold = ImageTransformUtils.PIC_HEIGHT, offsets = [-100         ])
 }
@@ -418,6 +418,7 @@ class ImageAlgorithms:
         _, _, rect, rect2 = ImageDrawingUtils.find_rect(self.camera_manager.pink_mask, self.camera_manager.polygon_image)
         # Check if a rectangle was found
         if rect is None:
+            print('no rect found')
             return None, None, None, None
         # Get the center of the rectangle
         x_center = rect[0][0]
@@ -432,10 +433,12 @@ class ImageAlgorithms:
                 y_center = y_center2
         # Check if the object is too low
         if y_center > ImageTransformUtils.PIC_HEIGHT - 30:
+            print('too low')
             return None, None, None, None
         # Check if the object is too high
         if y_center < ImageTransformUtils.PIC_HEIGHT - 230:# was 60
             # Object is too high, ignore it
+            print('too high')
             return None, None, None, None
 
         # Create and draw a line from the center of the object to the left or right side of the image

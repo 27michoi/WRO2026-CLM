@@ -38,7 +38,7 @@ class VideoThread(Thread):
                     
                     self.last_frame = display_copy
                     
-                    time.sleep(0.05)
+                    time.sleep(0.035)
                     
                 else:
                     try:

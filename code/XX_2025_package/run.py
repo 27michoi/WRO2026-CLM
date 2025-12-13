@@ -24,12 +24,12 @@ ANGLE_STRAIGHT = 85
 SPEED_STOP = 0
 SPEED_CHALLENGE_1_FAST = 5500
 SPEED_CHALLENGE_1_MID = 4000
-SPEED_CHALLENGE_1_SLOW = 1500
-SPEED_CHALLENGE_2_OBSTACLES = 4200
-SPEED_CHALLENGE_2_WALLS = 3500
-SPEED_CHALLENGE_2_APPROACH = 2000
-SPEED_CHALLENGE_2_PARKING = 1000
-SPEED_CHALLENGE_2_ACCELERATED_PARKING = 2500
+SPEED_CHALLENGE_1_SLOW = 3000
+SPEED_CHALLENGE_2_OBSTACLES = 5000 #4200 # fast is 5000
+SPEED_CHALLENGE_2_WALLS = 4500 #3500 # fast is 4500
+SPEED_CHALLENGE_2_APPROACH = 2500 # was 2000
+SPEED_CHALLENGE_2_PARKING = 2000 #1000 # fast is 1500
+SPEED_CHALLENGE_2_ACCELERATED_PARKING = 4500 #2500 # fast is 4500
 OBJECT_FAR_ENOUGH = 130
 OBJECT_CLOSE_ENOUGH = 175
 # endregion Constants
@@ -150,7 +150,10 @@ if __name__ == "__main__":
                     challenge_direction = Direction.RIGHT
                     parking_direction = Direction.LEFT
                 # Leave parking spot
-                arduino.send('t', ANGLE_STRAIGHT - 35 * challenge_direction.value, speed, 1200)
+                arduino.send('!', 10000000)
+                arduino.send('m', ANGLE_STRAIGHT - 35 * challenge_direction.value, speed)
+                time.sleep(0.85)
+                #arduino.send('t', ANGLE_STRAIGHT - 35 * challenge_direction.value, speed, 1200)
                 arduino.send('!', 10000000)
                 arduino.send('m', ANGLE_STRAIGHT, speed)
                 time.sleep(0.7)
@@ -236,7 +239,7 @@ if __name__ == "__main__":
                 if arduino.read() == 'F':
                     arduino.send('!', 10000000)
                     ok_to_detect_flag = True
-                if (ok_to_detect_flag and camera_manager.binary_image[140, ImageTransformUtils.PIC_WIDTH // 2] == 0 and top_angle is not None and parking_direction == Direction.RIGHT) or (ok_to_detect_flag and np.any(camera_manager.cnt_orangeline[ImageTransformUtils.PIC_HEIGHT - 100: ImageTransformUtils.PIC_HEIGHT - 65, ImageTransformUtils.PIC_WIDTH // 2 - 20: ImageTransformUtils.PIC_WIDTH // 2 + 20]) and parking_direction == Direction.LEFT):
+                if (ok_to_detect_flag and camera_manager.binary_image[140, ImageTransformUtils.PIC_WIDTH // 2] == 0 and top_angle is not None and parking_direction == Direction.RIGHT) or (ok_to_detect_flag and np.any(camera_manager.cnt_orangeline[ImageTransformUtils.PIC_HEIGHT - 120: ImageTransformUtils.PIC_HEIGHT - 65, ImageTransformUtils.PIC_WIDTH // 2 - 20: ImageTransformUtils.PIC_WIDTH // 2 + 20]) and parking_direction == Direction.LEFT):
                     speed = SPEED_STOP
                     angle = ANGLE_STRAIGHT
                     arduino.send('!', -10000000)
@@ -271,7 +274,10 @@ if __name__ == "__main__":
                     arduino.send('t', ANGLE_STRAIGHT, speed, 1650) # was 1750
                     speed_state = SpeedStates.REVERSE
                     context_manager.set_speed_state(speed_state)
-                    arduino.send('t', (ANGLE_STRAIGHT + 1) - 37 * parking_direction.value, -speed, 1250)
+                    if parking_direction == Direction.RIGHT:
+                        arduino.send('t', (ANGLE_STRAIGHT + 1) - 37 * parking_direction.value, -speed, 1325)    # was 1250
+                    else:
+                        arduino.send('t', (ANGLE_STRAIGHT + 1) - 37 * parking_direction.value, -speed, 1250)
                 else:
                     # Normal
                     print("Normal parking maneuver")

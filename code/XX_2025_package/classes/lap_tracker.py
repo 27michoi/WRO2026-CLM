@@ -66,7 +66,7 @@ class LapTracker:
             if self.time_stamp == 0:
                 self.time_stamp = time.time()
 
-            if time.time() - self.time_stamp >= 0.5:
+            if time.time() - self.time_stamp >= 1:
                 self._state = LapState.LOOKING_FOR_BLUE
                 self.time_stamp = time.time()
 
@@ -94,7 +94,7 @@ class LapTracker:
             if self.time_stamp == 0:
                 self.time_stamp = time.time()
 
-            if time.time() - self.time_stamp >= 0.5:
+            if time.time() - self.time_stamp >= 1:
                 self._state = LapState.LOOKING_FOR_ORANGE
                 self.time_stamp = time.time()
 
