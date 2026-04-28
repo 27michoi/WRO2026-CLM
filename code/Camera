@@ -1,0 +1,3 @@
+rpicam-hello
+rpicam-still -o Desktop/image.jpg
+rpicam-vid -o Desktop/video.mp4
