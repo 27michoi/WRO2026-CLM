@@ -4,3 +4,11 @@ rpicam-vid -o Desktop/video.mp4
 "image"-> name of the jpg
 "video"-> name of the mp4
 Do NOT name a new jpg or mp4 same as a previous file. It could delete the previous file
+
+
+Sudo apt update && sudo apt upgrade-y
+
+cd yolo
+source venv/bin/activate
+
+
